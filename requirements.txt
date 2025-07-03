@@ -1,0 +1,7 @@
+fastapi==0.110.0
+uvicorn==0.29.0
+pydantic==2.7.1
+python-multipart==0.0.9
+speechrecognition==3.10.1
+git+https://github.com/CIAT-DAPA/aclimatepyapi.git
+ollama==0.2.1
