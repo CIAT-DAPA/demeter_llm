@@ -6,7 +6,7 @@ if os.getenv('DEBUG', "true").lower() == "true":
     config['DEBUG'] = True
     config['HOST'] = 'localhost'
     config['PORT'] = 5000
-    config['ACLIMATE_API_BASE_URL'] = 'https://api.aclimate.org'
+    config['ACLIMATE_API_BASE_URL'] = 'https://webapi.aclimate.org/api/'
     config['OLLAMA_MODEL'] = 'llama3.3'
     config['OLLAMA_API_URL'] = "http://192.168.199.91:11434/api/generate"
 else:
