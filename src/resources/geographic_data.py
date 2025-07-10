@@ -45,10 +45,15 @@ class GeographicData:
         self.geo_data = all_sites
 
     def fuzzy_match_location(self, user_location: str) -> dict:
-        names = [site["name"] for site in self.geo_data]
+        #print("buscando sitio")
+        names = self.geo_data["ws_name"].to_list()
+        #print(names)
+        #print("Matches " + user_location)
         matches = get_close_matches(user_location, names, n=1, cutoff=0.6)
+        #print(matches)
         if matches:
-            for site in self.geo_data:
-                if site["name"] == matches[0]:
+            for index,site in self.geo_data.iterrows():
+                #print(site)
+                if site["ws_name"] == matches[0]:
                     return site
         return None

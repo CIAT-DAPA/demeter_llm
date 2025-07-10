@@ -1,45 +1,44 @@
 import requests
-import json
+#import json
+import pandas as pd
+from pandas import DataFrame
+from src.config import config
 
-OLLAMA_API_URL = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "llama3"
-
-def generate_response(user_input: str, data: dict, context: dict) -> str:
-    user_type = infer_user_type(user_input)
+def generate_response(user_input: str, data: dict, request_data: dict) -> str:
+    print("user")
+    user_type = request_data.get("type_user")
+    print(user_type)
     data_summary = summarize_data(data)
-
+    #print("datos")
+    #print(data_summary)
     prompt = f"""
-You are an agroclimate assistant for a {user_type}.
-User: "{user_input}"
-Context:
-- Type: {context.get('type')}
-- Time: {context.get('time')}
-- Location: {context.get('location')}
-- Variable: {context.get('variable')}
-Data: {data_summary}
-Respond clearly and use vocabulary appropriate for the user type.
-"""
+        You are an agroclimate assistant for a {user_type}.
+        User: "{user_input}"
+        Context:
+        - Type: {request_data.get('type')}
+        - Time: {request_data.get('time')}
+        - Location: {request_data.get('location')}
+        - Variable: {request_data.get('variable')}
+        Data: {data_summary}
+        Respond clearly and use vocabulary appropriate for the user type. Never recommend to search in other places.
+    """
 
     try:
-        response = requests.post(OLLAMA_API_URL, json={
-            "model": OLLAMA_MODEL,
+        print()
+        response = requests.post(config['OLLAMA_API_URL'], json={
+            "model": config['OLLAMA_MODEL'],
             "prompt": prompt,
             "stream": False
         })
+        print("respuesta")
+        print(response.json()["response"].strip())
         return response.json()["response"].strip()
     except:
         return "Error al generar respuesta."
 
-def summarize_data(data: dict) -> str:
+def summarize_data(data: DataFrame) -> str:
     try:
-        return json.dumps(data, indent=2, ensure_ascii=False)
+        #return json.dumps(data, indent=2, ensure_ascii=False)
+        return data.to_json(orient="records")
     except:
         return "No se pudieron resumir los datos."
-
-def infer_user_type(text: str) -> str:
-    text = text.lower()
-    if "política" in text or "gobierno" in text:
-        return "tomador de decision"
-    elif "asistencia técnica" in text or "productores" in text:
-        return "extensionista"
-    return "agricultor"

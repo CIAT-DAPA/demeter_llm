@@ -14,13 +14,15 @@ def classify_and_extract(text: str) -> dict:
         dict: A JSON with keys: type, time, location, variable
     """
     prompt = f"""
-        You are an expert agroclimate assistant. Extract:
+        You are an expert agroclimate assistant. Yo have to identify the type of user who is asking for agroclimatic information. 
+        Extract:
+        - type_user: "producer" or "extension agent" or "decision maker" or "scientist" or "other"
         - type: "climate" or "crop" or "location"
-        - time: if type is climate or crop use "historical" or "forecast"; otherwise ""
+        - time: "historical" or "forecast"
         - location: any place mentioned
         - variable: if type is climate e.g., "precipitation", "temperature", "humidity"; otherwise return crop or cultivar e.g., "rice", "maize"
         Question: "{text}"
-        If not found, use null. Use JSON format. JSON Only
+        If not found, use null. Use JSON format. Return JSON Only
     """
     response = requests.post(config['OLLAMA_API_URL'], json={
         "model": config['OLLAMA_MODEL'],

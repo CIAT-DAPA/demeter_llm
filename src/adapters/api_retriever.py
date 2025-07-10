@@ -15,22 +15,22 @@ def get_agroclimate_info(request_data: dict) -> dict:
 
     geo_cache = GeographicData.get_instance()
     location = geo_cache.fuzzy_match_location(raw_location)
-    print(location)
+    #print("location")
+    #print(location)
+    locations_ids = [location["ws_id"]]
     try:
         if type_request == "climate":
             if time == "historical":
                 historical = Historical(config["ACLIMATE_API_BASE_URL"])
                 end = datetime.date.today()
                 start = end - datetime.timedelta(days=30)
-                return historical.get_historical_weather(location_name=location,
-                                                    start_date=start.isoformat(),
-                                                    end_date=end.isoformat(),
-                                                    variables=[variable])
+                return historical.get_historical_climatology(locations_ids)
             elif time == "forecast":
                 forecast = Forecast(config["ACLIMATE_API_BASE_URL"])
-                return forecast.get_forecast(location_name=location, variables=[variable])
+                return forecast.get_forecast_climate(locations_ids)
         elif type_request == "crop":
-            return {}
+            forecast = Forecast(config["ACLIMATE_API_BASE_URL"])
+            return forecast.get_forecast_crop(locations_ids)
         return {"error": "Tiempo no reconocido"}
     except Exception as e:
         return {"error": str(e)}
