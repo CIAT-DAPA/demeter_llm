@@ -17,3 +17,4 @@ def handle_user_input(user_input: str, user_id: str) -> dict:
     #print(data)
     response = generate_response(user_input, data, request_data)
     return {"user_id": user_id, "response": response}
+    #return {"user_id": user_id, "response": "Hola"}

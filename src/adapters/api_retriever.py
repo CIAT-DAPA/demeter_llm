@@ -6,8 +6,6 @@ from src.resources.geographic_data import GeographicData
 import datetime
 
 def get_agroclimate_info(request_data: dict) -> dict:
-    print("datos enviados")
-    print(request_data)
     type_request = request_data.get("type")
     raw_location = request_data.get("location")
     time = request_data.get("time")
@@ -18,22 +16,22 @@ def get_agroclimate_info(request_data: dict) -> dict:
     locations_ids = [location["ws_id"]]
     try:
         if type_request == "climate":
-            if time == "climatology":
-                historical = Historical(config["ACLIMATE_API_BASE_URL"])
-                return historical.get_historical_climatology(locations_ids)
-            elif time == "historical":
+            if time == "historical":
                 historical = Historical(config["ACLIMATE_API_BASE_URL"])
                 return historical.get_historical_historicalclimatic(locations_ids)
             elif time == "forecast":
                 forecast = Forecast(config["ACLIMATE_API_BASE_URL"])
-                return forecast.get_forecast_climate(locations_ids)
+                d = forecast.get_forecast_climate(locations_ids)
+                print("forecast")
+                print(d['probabilities'])
+                return d['probabilities']
+            else:
+                historical = Historical(config["ACLIMATE_API_BASE_URL"])
+                return historical.get_historical_climatology(locations_ids)
         elif type_request == "crop":
             forecast = Forecast(config["ACLIMATE_API_BASE_URL"])
             return forecast.get_forecast_crop(locations_ids)
-        else:
-            if type_request == "location":
-                return location
-            else:
-                return {}
+        elif type_request == "location":
+            return location
     except Exception as e:
         return {"error": str(e)}

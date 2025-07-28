@@ -17,8 +17,10 @@ def classify_and_extract(text: str) -> dict:
         You are an expert agroclimate assistant.
         You have to identify the type of user who is asking for information.
         You have to identify the type of request from the user, it could be for climate, crops, locations, help or others.
-        When the request is about climate you should define if the request was about historical, climatology or seasonal forecast.
+        When the request is about climate you should define if the request was about historical, climatology or forecast;
+            the difference between historical and climatology is when user specific the year, in this case is historical otherwise is climatology.
         When the request is about crop you should define which crops or cultivars are in.
+        All dates should be reporte in the following JSON format: year:YYYY, month:MM, day:dd, fill with "0" the items that you don't identify in the same format.
         Extract:
         - type_user: "producer" or "extension agent" or "decision maker" or "scientist" or "general public"
         - type: "climate" or "crop" or "location" or "help" or "others"
