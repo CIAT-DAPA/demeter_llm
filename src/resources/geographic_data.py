@@ -44,6 +44,9 @@ class GeographicData:
         #print(all_sites)
         self.geo_data = all_sites
 
+    def get_all_locations(self):
+        return self.geo_data
+
     def fuzzy_match_location(self, user_location: str) -> dict:
         #print("buscando sitio")
         names = self.geo_data["ws_name"].to_list()

@@ -14,11 +14,16 @@ def classify_and_extract(text: str) -> dict:
         dict: A JSON with keys: type, time, location, variable
     """
     prompt = f"""
-        You are an expert agroclimate assistant. Yo have to identify the type of user who is asking for agroclimatic information. 
+        You are an expert agroclimate assistant.
+        You have to identify the type of user who is asking for information.
+        You have to identify the type of request from the user, it could be for climate, crops, locations, help or others.
+        When the request is about climate you should define if the request was about historical, climatology or seasonal forecast.
+        When the request is about crop you should define which crops or cultivars are in.
         Extract:
-        - type_user: "producer" or "extension agent" or "decision maker" or "scientist" or "other"
-        - type: "climate" or "crop" or "location"
-        - time: "historical" or "forecast"
+        - type_user: "producer" or "extension agent" or "decision maker" or "scientist" or "general public"
+        - type: "climate" or "crop" or "location" or "help" or "others"
+        - time: "historical" or "climatology" or "forecast"
+        - time_value: any date mentioned
         - location: any place mentioned
         - variable: if type is climate e.g., "precipitation", "temperature", "humidity"; otherwise return crop or cultivar e.g., "rice", "maize"
         Question: "{text}"
