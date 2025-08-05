@@ -9,13 +9,16 @@ def generate_response(user_input: str, data: dict, request_data: dict) -> str:
     type_request = request_data.get("type")
     user_type = request_data.get("type_user")
     data_summary = {}
-    if type_request == "climate":
+    if type_request == "climate" or type_request == "crop":
         data_summary = summarize_data(data)
     elif type_request == "location":
         data_summary = data["name"].to_json()
 
     #print("datos")
+    print(data.columns)
+    #print("datos 2")
     #print(data_summary)
+
     prompt = "Your name is Melisa chatbot."
     if type_request == "climate":
         prompt = prompt + f"""
@@ -46,9 +49,17 @@ def generate_response(user_input: str, data: dict, request_data: dict) -> str:
         prompt = prompt + f"""
         You are the best agroclimate assistant for a {user_type}.
         You have to answer the user request.
+        If Variable is not None, you should filter data by crop (crop name) or cultivar (cultivar name).
+        A configuration is composed of crop, cultivar, and soil.
+        You must filter the records and select the configuration with the best performance. To do this, search
+            the measure field for entries related to yield (kg/ha) and identify at least two configurations with the highest yields.
+        Your recommendations should be based on those two configurations.
+        The answers that you generate should be based on yield (measure).
+        You have to give them the best recommendation based on the user request and Data.
+
         User: "{user_input}"
         Instructions:
-        - You should filter data by crop (crop name) or cultivar (cultivar name) regarding to Variable.
+        - Get the best yield performance, to do it you should
         - Always indicates the yield of the crop and say that it is potential yield.
         - Never recommend to search in other places.
         - Respond clearly and use vocabulary appropriate for the user type and the same language.

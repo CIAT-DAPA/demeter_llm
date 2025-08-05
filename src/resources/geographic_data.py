@@ -67,7 +67,7 @@ class GeographicData:
         #print("Matches " + user_location)
         #matches = get_close_matches(user_location, names, n=1, cutoff=0.6)
         matches = get_close_matches(user_location, names, n=1, cutoff=0.2)
-        print(matches)
+        #print(matches)
         if matches:
             for index,site in self.geo_data.iterrows():
                 #print(site)

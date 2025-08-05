@@ -3,6 +3,7 @@ from aclimate_api.historical import Historical
 from aclimate_api.forecast import Forecast
 from src.config import config
 from src.resources.geographic_data import GeographicData
+from src.resources.agronomy_data import AgronomyData
 import datetime
 
 def get_agroclimate_info(request_data: dict) -> dict:
@@ -20,8 +21,6 @@ def get_agroclimate_info(request_data: dict) -> dict:
             if time == "historical":
                 historical = Historical(config["ACLIMATE_API_BASE_URL"])
                 d = historical.get_historical_historicalclimatic(locations_ids)
-                print("valor")
-                print(time_value["year"])
                 if "year" in time_value and (time_value["year"] != "0000" and time_value["year"] != "0"):
                     d = d[d["year"] == time_value["year"]]
                 return d
@@ -34,7 +33,11 @@ def get_agroclimate_info(request_data: dict) -> dict:
                 return historical.get_historical_climatology(locations_ids)
         elif type_request == "crop":
             forecast = Forecast(config["ACLIMATE_API_BASE_URL"])
-            return forecast.get_forecast_crop(locations_ids)
+            d = forecast.get_forecast_crop(locations_ids)
+            s = AgronomyData.get_instance().get_all_setups()
+            d = d.merge(s["cultivars"][["cultivar_id", "cultivar_name", "crop_name"]], left_on="cultivar", right_on="cultivar_id", how="left")
+            d = d.merge(s["soils"][["soil_id", "soil_name"]], left_on="soil", right_on="soil_id", how="left")
+            return d
         elif type_request == "location":
             return location
     except Exception as e:

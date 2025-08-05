@@ -19,8 +19,8 @@ def handle_user_input(user_input: str, user_id: str) -> dict:
             data = GeographicData.get_instance().get_all_countries()
         else:
             data = GeographicData.get_instance().fuzzy_match_location_many(request_data.get("location"))
-    print("data")
-    print(data)
+    #print("data")
+    #print(data)
     response = generate_response(user_input, data, request_data)
     return {"user_id": user_id, "response": response}
     #return {"user_id": user_id, "response": "Hola"}
