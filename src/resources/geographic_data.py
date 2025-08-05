@@ -38,22 +38,36 @@ class GeographicData:
                     all_sites = self.aclimate.get_geographic(country["id"])
                 else:
                     all_sites = pd.concat([all_sites, self.aclimate.get_geographic(country["id"])], ignore_index=True)
-                    #all_sites = all_sites.append(self.aclimate.get_geographic(country["id"]), ignore_index=True)
             except Exception as e:
                 print(f"Failed to load sites for {country['id']}: {e}")
+        all_sites["name"] = all_sites["country_name"] + ", " + all_sites["state_name"] + ", " + all_sites["municipality_name"] + ", " + all_sites["ws_name"]
         #print(all_sites)
         self.geo_data = all_sites
 
     def get_all_locations(self):
         return self.geo_data
+    
+    def get_all_countries(self):
+        return self.geo_data["country_name"].drop_duplicates()
+    
+    def fuzzy_match_location_many(self, user_location: str) -> dict:
+        #print("buscando sitio")
+        names = self.geo_data["name"].to_list()
+        #print(names)
+        #print("Matches " + user_location)
+        matches = get_close_matches(user_location, names, n=30, cutoff=0.2)
+        if matches:
+            return self.geo_data[self.geo_data["name"].isin(matches)]
+        return None
 
     def fuzzy_match_location(self, user_location: str) -> dict:
         #print("buscando sitio")
         names = self.geo_data["ws_name"].to_list()
         #print(names)
         #print("Matches " + user_location)
-        matches = get_close_matches(user_location, names, n=1, cutoff=0.6)
-        #print(matches)
+        #matches = get_close_matches(user_location, names, n=1, cutoff=0.6)
+        matches = get_close_matches(user_location, names, n=1, cutoff=0.2)
+        print(matches)
         if matches:
             for index,site in self.geo_data.iterrows():
                 #print(site)

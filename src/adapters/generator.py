@@ -12,8 +12,7 @@ def generate_response(user_input: str, data: dict, request_data: dict) -> str:
     if type_request == "climate":
         data_summary = summarize_data(data)
     elif type_request == "location":
-        #data_summary = GeographicData.get_all_locations().to_json()
-        data_summary = data.to_json()
+        data_summary = data["name"].to_json()
 
     #print("datos")
     #print(data_summary)
@@ -62,13 +61,13 @@ def generate_response(user_input: str, data: dict, request_data: dict) -> str:
         prompt = prompt + f"""
         You are the best agroclimate assistant for a {user_type}.
         You have to answer the user request.
+        You have to generate an understandable list of available locations using Data so that the user can say what they are looking for.
+        Don't show code to filter the list.
         User: "{user_input}"
         Instructions:
-        - You should filter places according to user Location request.
+        - Sort the list alphabetically.
         - Never recommend to search in other places.
         - Respond clearly and use vocabulary appropriate for the user type and the same language.
-        Context:
-        - Location: {request_data.get('location')}
         Data: {data_summary}
     """
     else:
@@ -77,8 +76,8 @@ def generate_response(user_input: str, data: dict, request_data: dict) -> str:
         You have to answer the user request.
         User: "{user_input}"
         Instructions:
-        - If it the request is about recommendations, say that you are not able to answer.
         - If user greet, greet.
+        - If user ask about your origin, tell them the tale about Greek godness Demeter and the Melisas.
         - If user request for help or manual user say: OK.
         - Never recommend to search in other places.
         - Respond clearly and use vocabulary appropriate for the user type and the same language.
