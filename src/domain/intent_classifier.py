@@ -31,6 +31,7 @@ def classify_and_extract(text: str) -> dict:
         Question: "{text}"
         If not found, use null. Use JSON format. Return JSON Only
     """
+    print(prompt)
     response = requests.post(config['OLLAMA_API_URL'], json={
         "model": config['OLLAMA_MODEL'],
         "prompt": prompt,

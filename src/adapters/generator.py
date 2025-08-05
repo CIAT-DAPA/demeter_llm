@@ -22,6 +22,15 @@ def generate_response(user_input: str, data: dict, request_data: dict) -> str:
         prompt = prompt + f"""
         You are the best climatologist assistant for a {user_type}.
         You have to answer the user request.
+        If user didn't declare the variable, you have to summarize all variables.
+        You have to take into account the Type request to generate the answer
+            * historical:
+                - Always give a summary for the years requested
+            * forecast:
+                - Always the data that you provided are probabilities about excess of rainfall, the categories are: above normal, below normal and normal.
+                - The month in the data is the center of the quarter
+            * climatology
+                - Say it is climatology
         User: "{user_input}"
         Instructions:
         - You have to filter data by measure, in this case use the context Variable.
@@ -31,6 +40,7 @@ def generate_response(user_input: str, data: dict, request_data: dict) -> str:
         Context:
         - Time: {request_data.get('time_value')}
         - Variable: {request_data.get('variable')}
+        - Type request: {request_data.get('time')} 
         Data: {data_summary}
     """
     elif type_request == "crop":
@@ -39,7 +49,7 @@ def generate_response(user_input: str, data: dict, request_data: dict) -> str:
         You have to answer the user request.
         User: "{user_input}"
         Instructions:
-        - You should filter data by crop (crop name) or cultivar (cultivar name).
+        - You should filter data by crop (crop name) or cultivar (cultivar name) regarding to Variable.
         - Always indicates the yield of the crop and say that it is potential yield.
         - Never recommend to search in other places.
         - Respond clearly and use vocabulary appropriate for the user type and the same language.
