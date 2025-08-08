@@ -37,6 +37,8 @@ def get_agroclimate_info(request_data: dict) -> dict:
             s = AgronomyData.get_instance().get_all_setups()
             d = d.merge(s["cultivars"][["cultivar_id", "cultivar_name", "crop_name"]], left_on="cultivar", right_on="cultivar_id", how="left")
             d = d.merge(s["soils"][["soil_id", "soil_name"]], left_on="soil", right_on="soil_id", how="left")
+            d = d[d["measure"].isin(["yield_0", "yield_14"])]
+            d = d.sort_values(by="avg", ascending=False).head(2)
             return d
         elif type_request == "location":
             return location
