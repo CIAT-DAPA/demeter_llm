@@ -4,14 +4,14 @@ pipeline {
     agent any
 
     environment {
-        user = credentials('aclimate_user')
-        host = credentials('aclimate_host')
-        name = credentials('aclimate_name')
-        ssh_key = credentials('aclimate_devops')
+        user = credentials('demeter_llm_user')
+        host = credentials('demeter_llm_host')
+        name = credentials('demeter_llm_name')
+        ssh_key = credentials('demeter_llm_deploy')
     }
 
     stages {
-        stage('Ssh to connect Herschel server') {
+        stage('Ssh to connect Melisa server') {
             steps {
                 script {
                     try {
