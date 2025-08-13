@@ -7,6 +7,7 @@ pipeline {
         user = credentials('demeter_llm_user')
         host = credentials('demeter_llm_host')
         name = credentials('demeter_llm_name')
+        password = credentials('demeter_llm_password')
         ssh_key = credentials('demeter_llm_deploy')
     }
 
@@ -18,6 +19,7 @@ pipeline {
                         remote.allowAnyHosts = true
                         remote.identityFile = ssh_key
                         remote.user = user
+                        remote.password = password
                         remote.name = name
                         remote.host = host
 
