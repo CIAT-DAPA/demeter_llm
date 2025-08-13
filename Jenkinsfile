@@ -17,6 +17,7 @@ pipeline {
                         remote.user = user
                         remote.password = pass
                         remote.host = host
+                        remote.name = host
                         remote.allowAnyHosts = true
 
                         sshCommand remote: remote, command: "echo 'Connection successful!'"
