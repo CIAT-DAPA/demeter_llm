@@ -3,12 +3,12 @@ def remote = [:]
 pipeline {
     agent any
 
-    environment {
-        user = credentials('demeter_llm_user')
-        host = credentials('demeter_llm_host')
-        name = credentials('demeter_llm_name')
-        password = credentials('demeter_llm_password')
-    }
+        environment {
+            user = credentials('demeter_llm_ssh')
+            pass = credentials('demeter_llm_ssh')
+            host = credentials('demeter_llm_host')
+            name = credentials('demeter_llm_name')
+        }
 
     stages {
         stage('Ssh to connect Melisa server') {
@@ -16,7 +16,7 @@ pipeline {
                 script {
                     try {
                         remote.user = user
-                        remote.password = password
+                        remote.password = pass
                         remote.host = host
                         remote.name = name
                         remote.allowAnyHosts = true
