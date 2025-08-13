@@ -7,7 +7,6 @@ pipeline {
             user = credentials('demeter_llm_ssh')
             pass = credentials('demeter_llm_ssh')
             host = credentials('demeter_llm_host')
-            name = credentials('demeter_llm_name')
         }
 
     stages {
@@ -18,7 +17,6 @@ pipeline {
                         remote.user = user
                         remote.password = pass
                         remote.host = host
-                        remote.name = name
                         remote.allowAnyHosts = true
 
                         sshCommand remote: remote, command: "echo 'Connection successful!'"
