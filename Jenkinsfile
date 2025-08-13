@@ -8,7 +8,6 @@ pipeline {
         host = credentials('demeter_llm_host')
         name = credentials('demeter_llm_name')
         password = credentials('demeter_llm_password')
-        ssh_key = credentials('demeter_llm_deploy')
     }
 
     stages {
@@ -16,12 +15,11 @@ pipeline {
             steps {
                 script {
                     try {
-                        remote.allowAnyHosts = true
-                        remote.identityFile = ssh_key
                         remote.user = user
                         remote.password = password
-                        remote.name = name
                         remote.host = host
+                        remote.name = name
+                        remote.allowAnyHosts = true
 
                         sshCommand remote: remote, command: "echo 'Connection successful!'"
                     } catch (Exception e) {
