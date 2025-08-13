@@ -1,0 +1,82 @@
+def remote = [:]
+
+pipeline {
+    agent any
+
+    environment {
+        user = credentials('aclimate_user')
+        host = credentials('aclimate_host')
+        name = credentials('aclimate_name')
+        ssh_key = credentials('aclimate_devops')
+    }
+
+    stages {
+        stage('Ssh to connect Herschel server') {
+            steps {
+                script {
+                    try {
+                        remote.allowAnyHosts = true
+                        remote.identityFile = ssh_key
+                        remote.user = user
+                        remote.name = name
+                        remote.host = host
+
+                        sshCommand remote: remote, command: "echo 'Connection successful!'"
+                    } catch (Exception e) {
+                        echo "SSH Connection Error: ${e.message}"
+                        error("Failed to establish SSH connection: ${e.message}")
+                    }
+                }
+            }
+        }
+        stage('Update API code') {
+            steps {
+                script {
+                    try {
+                        sshCommand remote: remote, command: """
+                            cd /var/www/melisa/demeter_llm/
+                            git checkout main
+                            git pull origin main
+                            source ~/anaconda3/etc/profile.d/conda.sh
+                            conda activate demeter_llm_api
+                            pip install -r requirements.txt
+                        """
+                    } catch (Exception e) {
+                        echo "Git Pull Error: ${e.message}"
+                        error("Failed to update code: ${e.message}")
+                    }
+                }
+            }
+        }
+        stage('Restart API service') {
+            steps {
+                script {
+                    try {
+                        sshCommand remote: remote, command: """
+                            source ~/anaconda3/etc/profile.d/conda.sh
+                            conda activate demeter_llm_api
+                            fuser -k 3001/tcp || true
+                            nohup uvicorn src.api:app --host 0.0.0.0 --port 3001 > api.log 2>&1 &
+                        """
+                    } catch (Exception e) {
+                        echo "API Restart Error: ${e.message}"
+                        error("Failed to restart API: ${e.message}")
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            script {
+                echo "Pipeline failed"
+            }
+        }
+        success {
+            script {
+                echo 'API deployed successfully!'
+            }
+        }
+    }
+}
