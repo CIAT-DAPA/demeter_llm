@@ -37,7 +37,7 @@ pipeline {
                             git checkout main
                             git pull origin main
                             source ~/anaconda3/etc/profile.d/conda.sh
-                            conda activate demeter_llm_api
+                            conda activate /home/scalderon/.conda/envs/demeter_llm_api
                             pip install -r requirements.txt
                         """
                     } catch (Exception e) {
@@ -53,7 +53,7 @@ pipeline {
                     try {
                         sshCommand remote: remote, command: """
                             source ~/anaconda3/etc/profile.d/conda.sh
-                            conda activate demeter_llm_api
+                            conda activate /home/scalderon/.conda/envs/demeter_llm_api
                             fuser -k 3001/tcp || true
                             nohup uvicorn src.api:app --host 0.0.0.0 --port 3001 > api.log 2>&1 &
                         """
