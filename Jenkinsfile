@@ -21,7 +21,7 @@ pipeline {
                     DIRECTORIO = sh(script: 'ssh ${REMOTE_CONN} "[ -d ${FOLDER_NAME} ] && echo 1 || echo 0"', returnStdout: true).trim()
                     CONTENIDO = sh(script: '''
                         ssh ${REMOTE_CONN} '
-                        if [ "$(ls -A /opt/pestdisplaceNPL/back/)" ]; then
+                        if [ "$(ls -A ${FOLDER_NAME})" ]; then
                             echo "1"
                         else
                             echo "0"
