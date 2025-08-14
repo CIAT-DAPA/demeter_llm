@@ -5,7 +5,6 @@ pipeline {
 
         environment {
             user = credentials('bbb872a0-f1a9-4d1c-a6ff-49a54fbe4985')
-            pass = credentials('bbb872a0-f1a9-4d1c-a6ff-49a54fbe4985')
             host = credentials('demeter_llm_host')
         }
 
@@ -15,7 +14,6 @@ pipeline {
                 script {
                     try {
                         remote.user = user
-                        remote.password = pass
                         remote.host = host
                         remote.name = host
                         remote.allowAnyHosts = true
