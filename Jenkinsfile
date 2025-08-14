@@ -1,41 +1,81 @@
+def remote = [:]
+
 pipeline {
+    agent any
 
-     agent any
-
-    //agent any
- 
-   environment {
-        REMOTE_CONN = 'demeter_llm@192.168.199.91'  // Reemplaza con tu usuario y host del servidor remoto
-       REMOTE_HOST = '192.168.199.91'
-        FOLDER_NAME = '/var/www/melisa/demeter_llm/'
-         REPO_URL = 'https://github.com/CIAT-DAPA/demeter_llm'
-        
-    }
- 
-    stages {
-        
-
-        stage('Check directory and content') {
-        steps {
-                script {
-                    DIRECTORIO = sh(script: 'ssh ${REMOTE_CONN} "[ -d ${FOLDER_NAME} ] && echo 1 || echo 0"', returnStdout: true).trim()
-                    CONTENIDO = sh(script: '''
-                        ssh ${REMOTE_CONN} '
-                        if [ "$(ls -A ${FOLDER_NAME})" ]; then
-                            echo "1"
-                        else
-                            echo "0"
-                        fi'
-                    ''', returnStdout: true).trim()
-                
-                
-                }
-        echo "El resultado del comando es: ${DIRECTORIO}"
-        echo "Resultado: ${CONTENIDO}"             
-        
-            }
-                
+        environment {
+            host = credentials('demeter_llm_host')
         }
 
+    stages {
+        stage('Ssh to connect Melisa server') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'bbb872a0-f1a9-4d1c-a6ff-49a54fbe4985', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        try {
+                            remote.user = USER
+                            remote.password = PASS
+                            remote.host = host
+                            remote.name = host
+                            remote.allowAnyHosts = true
+
+                            sshCommand remote: remote, command: "echo 'Connection successful!'"
+                        } catch (Exception e) {
+                            echo "SSH Connection Error: ${e.message}"
+                            error("Failed to establish SSH connection: ${e.message}")
+                        }
+                    }
+                }
+            }
+        }
+        stage('Update API code') {
+            steps {
+                script {
+                    try {
+                        sshCommand remote: remote, command: """
+                            cd /var/www/melisa/demeter_llm/
+                            git checkout main
+                            git pull origin main
+                            source ~/anaconda3/etc/profile.d/conda.sh
+                            conda activate demeter_llm_api
+                            pip install -r requirements.txt
+                        """
+                    } catch (Exception e) {
+                        echo "Git Pull Error: ${e.message}"
+                        error("Failed to update code: ${e.message}")
+                    }
+                }
+            }
+        }
+        stage('Restart API service') {
+            steps {
+                script {
+                    try {
+                        sshCommand remote: remote, command: """
+                            source ~/anaconda3/etc/profile.d/conda.sh
+                            conda activate demeter_llm_api
+                            fuser -k 3001/tcp || true
+                            nohup uvicorn src.api:app --host 0.0.0.0 --port 3001 > api.log 2>&1 &
+                        """
+                    } catch (Exception e) {
+                        echo "API Restart Error: ${e.message}"
+                        error("Failed to restart API: ${e.message}")
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            script {
+                echo "Pipeline failed"
+            }
+        }
+        success {
+            script {
+                echo 'API deployed successfully!'
+            }
+        }
     }
 }
