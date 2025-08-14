@@ -36,6 +36,7 @@ pipeline {
                             cd /var/www/melisa/demeter_llm/
                             git checkout main
                             git pull origin main
+                            source /opt/anaconda3/etc/profile.d/conda.sh
                             conda activate /home/scalderon/.conda/envs/demeter_llm_api
                             pip install -r requirements.txt
                         """
@@ -51,6 +52,7 @@ pipeline {
                 script {
                     try {
                         sshCommand remote: remote, command: """
+                            source /opt/anaconda3/etc/profile.d/conda.sh
                             conda activate /home/scalderon/.conda/envs/demeter_llm_api
                             fuser -k 3001/tcp || true
                             nohup uvicorn src.api:app --host 0.0.0.0 --port 3001 > api.log 2>&1 &
