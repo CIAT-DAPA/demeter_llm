@@ -4,8 +4,8 @@ pipeline {
     agent any
 
         environment {
-            user = credentials('demeter_llm_ssh')
-            pass = credentials('demeter_llm_ssh')
+            user = credentials('bbb872a0-f1a9-4d1c-a6ff-49a54fbe4985')
+            pass = credentials('bbb872a0-f1a9-4d1c-a6ff-49a54fbe4985')
             host = credentials('demeter_llm_host')
         }
 
