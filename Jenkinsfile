@@ -4,8 +4,8 @@ pipeline {
     agent any
 
         environment {
-            user = credentials('bbb872a0-f1a9-4d1c-a6ff-49a54fbe4985')
-            host = credentials('demeter_llm_host')
+            user = "demeter_llm"
+            host = "192.168.199.91"
         }
 
     stages {
