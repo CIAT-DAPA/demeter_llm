@@ -52,7 +52,7 @@ pipeline {
                 script {
                     try {
                         sshCommand remote: remote, command: """
-                            cd /var/www/melisa/demeter_llm/src
+                            cd /var/www/melisa/demeter_llm
                             source /opt/anaconda3/etc/profile.d/conda.sh
                             conda activate /home/scalderon/.conda/envs/demeter_llm_api
                             fuser -k 3001/tcp || true
