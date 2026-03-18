@@ -5,8 +5,10 @@ import speech_recognition as sr
 import io
 from src.config import config
 from src.domain.question import handle_user_input
+from dotenv import load_dotenv
 
 
+load_dotenv()
 app = FastAPI()
 
 class TextRequest(BaseModel):
